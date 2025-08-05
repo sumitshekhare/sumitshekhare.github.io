@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alphabet Order Game - Interact.js working drop</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    text-align: center;
+    background: #f0f8ff;
+  }
+  #question {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  #dropZone {
+    margin-left: 10px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    border: 2px dashed #999;
+    border-radius: 10px;
+    background: white;
+    vertical-align: middle;
+  }
+  #options {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .option {
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border: 2px solid #666;
+    border-radius: 10px;
+    background: white;
+    cursor: grab;
+    font-weight: bold;
+    font-size: 24px;
+    user-select: none;
+    touch-action: none;
+    position: relative;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .dropped {
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+  }
+  .dropped.correct {
+    border: 2px solid green;
+  }
+  .dropped.incorrect {
+    border: 2px solid red;
+  }
+  #retryBtn, #nextBtn {
+    margin-top: 15px;
+    padding: 10px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: none;
+    color: white;
+  }
+  #retryBtn {
+    background: #f44336;
+  }
+  #retryBtn:hover {
+    background: #d32f2f;
+  }
+  #nextBtn {
+    background: #4caf50;
+  }
+  #nextBtn:hover {
+    background: #388e3c;
+  }
+  #tick {
+    font-size: 40px;
+    color: green;
+    display: none;
+  }
+  #cross {
+    font-size: 40px;
+    color: red;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<h2>Alphabet Order Game</h2>
+<div id="question"></div>
+<div id="dropZone"></div>
+
+<div id="options"></div>
+
+<div>
+  <span id="tick">✔️</span>
+  <span id="cross">❌</span>
+</div>
+
+<button id="retryBtn">Retry</button>
+<button id="nextBtn">Next</button>
+
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+<script>
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  let remainingLetters = alphabet.slice(1, 26);
+  let currentQuestion = { letter: "", correctAnswer: "" };
+  let currentOptions = [];
+  let dropped = false;
+
+  function shuffle(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+  }
+
+  function getDistractors(questionLetter, correctLetter) {
+    const distractors = [];
+    while (distractors.length < 2) {
+      const rand = alphabet[Math.floor(Math.random() * 26)];
+      if (rand !== correctLetter && rand !== questionLetter && !distractors.includes(rand)) {
+        distractors.push(rand);
+      }
+    }
+    return distractors;
+  }
+
+  function loadQuestion() {
+    dropped = false;
+    document.getElementById("tick").style.display = "none";
+    document.getElementById("cross").style.display = "none";
+    document.getElementById("retryBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("dropZone").innerHTML = "";
+
+    if (remainingLetters.length === 0) {
+      remainingLetters = alphabet.slice(1, 26);
+    }
+    const idx = Math.floor(Math.random() * remainingLetters.length);
+    const letter = remainingLetters.splice(idx, 1)[0];
+    const correctAnswer = String.fromCharCode(letter.charCodeAt(0) - 1);
+    currentQuestion = { letter, correctAnswer };
+
+    document.getElementById("question").innerHTML = `Guess the letter before <strong>${letter}</strong>`;
+
+    const distractors = getDistractors(letter, correctAnswer);
+    currentOptions = shuffle([correctAnswer, ...distractors]);
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    currentOptions.forEach(l => {
+      const d = document.createElement("div");
+      d.className = "option";
+      d.textContent = l;
+      d.setAttribute("data-letter", l);
+      d.style.opacity = 1;
+      d.style.pointerEvents = "auto";
+      d.style.transform = "translate(0, 0)";
+      d.setAttribute("data-x", 0);
+      d.setAttribute("data-y", 0);
+      optionsDiv.appendChild(d);
+    });
+
+    initDragDrop();
+  }
+
+  function retry() {
+    dropped = false;
+    document.getElementById("tick").style.display = "none";
+    document.getElementById("cross").style.display = "none";
+    document.getElementById("retryBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("dropZone").innerHTML = "";
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    currentOptions.forEach(l => {
+      const d = document.createElement("div");
+      d.className = "option";
+      d.textContent = l;
+      d.setAttribute("data-letter", l);
+      d.style.opacity = 1;
+      d.style.pointerEvents = "auto";
+      d.style.transform = "translate(0, 0)";
+      d.setAttribute("data-x", 0);
+      d.setAttribute("data-y", 0);
+      optionsDiv.appendChild(d);
+    });
+
+    initDragDrop();
+  }
+
+  function nextQuestion() {
+    loadQuestion();
+  }
+
+  function initDragDrop() {
+    interact('.option').draggable({
+      inertia: false,
+      modifiers: [
+        interact.modifiers.restrict({
+          restriction: 'parent',
+          endOnly: true,
+        }),
+      ],
+      listeners: {
+        move(event) {
+          const target = event.target;
+          let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+          let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+          target.style.transform = `translate(${x}px, ${y}px)`;
+          target.setAttribute('data-x', x);
+          target.setAttribute('data-y', y);
+        },
+        end(event) {
+          if (!dropped) {
+            resetTransform(event.target);
+          }
+        }
+      }
+    });
+
+    interact('#dropZone').dropzone({
+      accept: '.option',
+      overlap: 0.75,
+      ondrop(event) {
+        dropped = true;
+        const letter = event.relatedTarget.getAttribute("data-letter");
+        const dropZone = document.getElementById("dropZone");
+        const tick = document.getElementById("tick");
+        const cross = document.getElementById("cross");
+        const retryBtn = document.getElementById("retryBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        dropZone.innerHTML = "";
+
+        const droppedDiv = document.createElement("div");
+        droppedDiv.className = "dropped";
+        droppedDiv.textContent = letter;
+
+        if (letter === currentQuestion.correctAnswer) {
+          droppedDiv.classList.add("correct");
+          tick.style.display = "inline";
+          cross.style.display = "none";
+          retryBtn.style.display = "none";
+          nextBtn.style.display = "inline";
+        } else {
+          droppedDiv.classList.add("incorrect");
+          tick.style.display = "none";
+          cross.style.display = "inline";
+          retryBtn.style.display = "inline";
+          nextBtn.style.display = "none";
+        }
+
+        dropZone.appendChild(droppedDiv);
+
+        // Reset transform and hide dragged option cleanly
+        event.relatedTarget.style.transform = "translate(0, 0)";
+        event.relatedTarget.setAttribute("data-x", 0);
+        event.relatedTarget.setAttribute("data-y", 0);
+        event.relatedTarget.style.opacity = 0;
+        event.relatedTarget.style.pointerEvents = "none";
+      }
+    });
+  }
+
+  function resetTransform(el) {
+    el.style.transform = "translate(0, 0)";
+    el.setAttribute("data-x", 0);
+    el.setAttribute("data-y", 0);
+  }
+
+  // Initialize the first question
+  loadQuestion();
+
+  // Attach button events
+  document.getElementById("retryBtn").onclick = retry;
+  document.getElementById("nextBtn").onclick = nextQuestion;
+</script>
+
+</body>
+</html>
