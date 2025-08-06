@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guess the Number Between</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .letter-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .letter-box, .drop-zone {
+      width: 70px;
+      height: 70px;
+      font-size: 32px;
+      line-height: 70px;
+      border: 2px solid #000;
+      border-radius: 6px;
+      background-color: #fff;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drop-zone {
+      border-style: dashed;
+    }
+
+    .options {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .option, .dropped {
+      width: 60px;
+      height: 60px;
+      line-height: 60px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4285f4;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      user-select: none;
+      text-align: center;
+      cursor: grab;
+      touch-action: none;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dropped.correct {
+      background-color: green;
+    }
+    .dropped.incorrect {
+      background-color: red;
+    }
+
+    .feedback {
+      font-size: 36px;
+      margin-top: 20px;
+    }
+
+    .tick {
+      color: green;
+      display: none;
+    }
+    .cross {
+      color: red;
+      display: none;
+    }
+
+    #retryBtn, #nextBtn {
+      margin-top: 15px;
+      padding: 10px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+      color: white;
+    }
+
+    #retryBtn {
+      background: #f44336;
+    }
+    #retryBtn:hover {
+      background: #d32f2f;
+    }
+
+    #nextBtn {
+      background: #4caf50;
+    }
+    #nextBtn:hover {
+      background: #388e3c;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Guess the Number Between</h2>
+<div class="question">Guess the Number Between</div>
+<div class="letter-row">
+  <div id="leftLetter" class="letter-box"></div>
+  <div class="drop-zone" id="dropZone"></div>
+  <div id="rightLetter" class="letter-box"></div>
+</div>
+<div class="options" id="options"></div>
+
+<div class="feedback">
+  <span id="tick" class="tick">✔️</span>
+  <span id="cross" class="cross">❌</span>
+</div>
+
+<button id="retryBtn">Retry</button>
+<button id="nextBtn">Next</button>
+
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+<script>
+  const alphabet ="1,2,3,4,5,6,7,8,9,10".split(",");
+  let endpointPairs = [];
+  for (let i = 0; i + 2 < alphabet.length; i++) {
+    endpointPairs.push([alphabet[i], alphabet[i + 2]]);
+  }
+
+  function shuffle(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+  }
+
+  endpointPairs = shuffle(endpointPairs);
+  let pairIndex = 0;
+  let currentEndpoints = null;
+  let currentCorrect = "";
+  let currentOptions = [];
+  let dropped = false;
+
+  function resetPoolIfNeeded() {
+    if (pairIndex >= endpointPairs.length) {
+      endpointPairs = [];
+      for (let i = 0; i + 2 < alphabet.length; i++) {
+        endpointPairs.push([alphabet[i], alphabet[i + 2]]);
+      }
+      endpointPairs = shuffle(endpointPairs);
+      pairIndex = 0;
+    }
+  }
+
+  function getTwoWrongOptions(a, b, correct) {
+    const wrongs = [];
+    while (wrongs.length < 2) {
+      const rand = alphabet[Math.floor(Math.random() * alphabet.length)];
+      if ([a, b, correct, ...wrongs].includes(rand)) continue;
+      wrongs.push(rand);
+    }
+    return wrongs;
+  }
+
+  function loadQuestion() {
+    dropped = false;
+    document.getElementById("tick").style.display = "none";
+    document.getElementById("cross").style.display = "none";
+    document.getElementById("retryBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("dropZone").innerHTML = "";
+
+    resetPoolIfNeeded();
+    currentEndpoints = endpointPairs[pairIndex++];
+    const [first, second] = currentEndpoints;
+    const correct = alphabet[alphabet.indexOf(first) + 1];
+    currentCorrect = correct;
+    const wrongs = getTwoWrongOptions(first, second, correct);
+    currentOptions = shuffle([correct, ...wrongs]);
+
+    document.getElementById("leftLetter").textContent = first;
+    document.getElementById("rightLetter").textContent = second;
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    currentOptions.forEach(l => {
+      const d = document.createElement("div");
+      d.className = "option";
+      d.textContent = l;
+      d.setAttribute("data-letter", l);
+      d.style.opacity = 1;
+      d.style.pointerEvents = "auto";
+      d.style.transform = "translate(0, 0)";
+      d.setAttribute("data-x", 0);
+      d.setAttribute("data-y", 0);
+      optionsDiv.appendChild(d);
+    });
+    initDragDrop();
+  }
+
+  function retry() {
+    dropped = false;
+    document.getElementById("tick").style.display = "none";
+    document.getElementById("cross").style.display = "none";
+    document.getElementById("retryBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("dropZone").innerHTML = "";
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    currentOptions.forEach(l => {
+      const d = document.createElement("div");
+      d.className = "option";
+      d.textContent = l;
+      d.setAttribute("data-letter", l);
+      d.style.opacity = 1;
+      d.style.pointerEvents = "auto";
+      d.style.transform = "translate(0, 0)";
+      d.setAttribute("data-x", 0);
+      d.setAttribute("data-y", 0);
+      optionsDiv.appendChild(d);
+    });
+    initDragDrop();
+  }
+
+  function nextQuestion() {
+    loadQuestion();
+  }
+
+  function initDragDrop() {
+    interact(".option").draggable({
+      inertia: false,
+      modifiers: [
+        interact.modifiers.restrict({ restriction: "parent", endOnly: true })
+      ],
+      listeners: {
+        move(event) {
+          const target = event.target;
+          let x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+          let y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+          target.style.transform = `translate(${x}px, ${y}px)`;
+          target.setAttribute("data-x", x);
+          target.setAttribute("data-y", y);
+        },
+        end(event) {
+          if (!dropped) resetTransform(event.target);
+        }
+      }
+    });
+
+    interact("#dropZone").dropzone({
+      accept: ".option",
+      overlap: 0.75,
+      ondrop(event) {
+        dropped = true;
+        const letter = event.relatedTarget.getAttribute("data-letter");
+        const dropZone = document.getElementById("dropZone");
+        const tick = document.getElementById("tick");
+        const cross = document.getElementById("cross");
+        const retryBtn = document.getElementById("retryBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        dropZone.innerHTML = "";
+        const droppedDiv = document.createElement("div");
+        droppedDiv.className = "dropped";
+        droppedDiv.textContent = letter;
+
+        if (letter === currentCorrect) {
+          droppedDiv.classList.add("correct");
+          tick.style.display = "inline";
+          cross.style.display = "none";
+          retryBtn.style.display = "none";
+          nextBtn.style.display = "inline";
+        } else {
+          droppedDiv.classList.add("incorrect");
+          tick.style.display = "none";
+          cross.style.display = "inline";
+          retryBtn.style.display = "inline";
+          nextBtn.style.display = "none";
+        }
+
+        dropZone.appendChild(droppedDiv);
+        event.relatedTarget.style.transform = "translate(0, 0)";
+        event.relatedTarget.setAttribute("data-x", 0);
+        event.relatedTarget.setAttribute("data-y", 0);
+        event.relatedTarget.style.opacity = 0;
+        event.relatedTarget.style.pointerEvents = "none";
+      }
+    });
+  }
+
+  function resetTransform(el) {
+    el.style.transform = "translate(0, 0)";
+    el.setAttribute("data-x", 0);
+    el.setAttribute("data-y", 0);
+  }
+
+  loadQuestion();
+  document.getElementById("retryBtn").onclick = retry;
+  document.getElementById("nextBtn").onclick = nextQuestion;
+</script>
+</body>
+</html>
