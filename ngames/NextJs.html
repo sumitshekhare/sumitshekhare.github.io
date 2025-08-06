@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,108 +7,138 @@
 <title>Alphabet Order Game - Interact.js working drop</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    text-align: center;
-    background: #f0f8ff;
-  }
-  #question {
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-  #dropZone {
-    margin-left: 10px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 80px;
-    height: 80px;
-    border: 2px dashed #999;
-    border-radius: 10px;
-    background: white;
-    vertical-align: middle;
-  }
-  #options {
-    margin-top: 30px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-  .option {
-    width: 60px;
-    height: 60px;
-    line-height: 60px;
-    border: 2px solid #666;
-    border-radius: 10px;
-    background: white;
-    cursor: grab;
-    font-weight: bold;
-    font-size: 24px;
-    user-select: none;
-    touch-action: none;
-    position: relative;
-    transition: transform 0.15s ease, opacity 0.15s ease;
-  }
-  .dropped {
-    width: 60px;
-    height: 60px;
-    line-height: 60px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 24px;
-    text-align: center;
-  }
-  .dropped.correct {
-    border: 2px solid green;
-  }
-  .dropped.incorrect {
-    border: 2px solid red;
-  }
-  #retryBtn, #nextBtn {
-    margin-top: 15px;
-    padding: 10px 24px;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    display: none;
-    color: white;
-  }
-  #retryBtn {
-    background: #f44336;
-  }
-  #retryBtn:hover {
-    background: #d32f2f;
-  }
-  #nextBtn {
-    background: #4caf50;
-  }
-  #nextBtn:hover {
-    background: #388e3c;
-  }
-  #tick {
-    font-size: 40px;
-    color: green;
-    display: none;
-  }
-  #cross {
-    font-size: 40px;
-    color: red;
-    display: none;
-  }
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .letter-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .letter-box, .drop-zone {
+      width: 70px;
+      height: 70px;
+      font-size: 32px;
+      line-height: 70px;
+      border: 2px solid #000;
+      border-radius: 6px;
+      background-color: #fff;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drop-zone {
+      border-style: dashed;
+    }
+
+    .options {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .option, .dropped {
+      width: 60px;
+      height: 60px;
+      line-height: 60px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4285f4;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      user-select: none;
+      text-align: center;
+      cursor: grab;
+      touch-action: none;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dropped.correct {
+      background-color: green;
+    }
+    .dropped.incorrect {
+      background-color: red;
+    }
+
+    .feedback {
+      font-size: 36px;
+      margin-top: 20px;
+    }
+
+    .tick {
+      color: green;
+      display: none;
+    }
+    .cross {
+      color: red;
+      display: none;
+    }
+
+    #retryBtn, #nextBtn {
+      margin-top: 15px;
+      padding: 10px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+      color: white;
+    }
+
+    #retryBtn {
+      background: #f44336;
+    }
+    #retryBtn:hover {
+      background: #d32f2f;
+    }
+
+    #nextBtn {
+      background: #4caf50;
+    }
+    #nextBtn:hover {
+      background: #388e3c;
+    }
 </style>
 </head>
 <body>
 
 <h2>Alphabet Order Game</h2>
-<div id="question"></div>
+<div class="question">Guess the After Letter</div>
+<div class="letter-row">
+  <div id="leftLetter" class="letter-box"></div>
+  <div class="drop-zone" id="dropZone"></div>
+</div>
 <div id="dropZone"></div>
 
-<div id="options"></div>
+<div  class="options"  id="options"></div>
 
-<div>
-  <span id="tick">✔️</span>
-  <span id="cross">❌</span>
+<div class="feedback">
+  <span id="tick" class="tick">✔️</span>
+  <span id="cross"  class="cross" >❌</span>
 </div>
 
 <button id="retryBtn">Retry</button>
@@ -152,7 +183,7 @@
     const correctAnswer = String.fromCharCode(letter.charCodeAt(0) + 1);
     currentQuestion = { letter, correctAnswer };
 
-    document.getElementById("question").innerHTML = `Guess the letter after <strong>${letter}</strong>`;
+    document.getElementById("leftLetter").innerHTML = `<strong>${letter}</strong>`;
 
     const distractors = getDistractors(letter, correctAnswer);
     currentOptions = shuffle([correctAnswer, ...distractors]);
