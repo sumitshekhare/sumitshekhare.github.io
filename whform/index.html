@@ -66,13 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
     htmlInput.addEventListener('paste', (event) => {
         event.preventDefault();
         const clipboardData = (event.clipboardData || window.clipboardData);
-        const pastedHTML = clipboardData.getData('text/html');
-        htmlInput.value = pastedHTML || clipboardData.getData('text/plain');
+        htmlInput.value = clipboardData.getData('text/html') || clipboardData.getData('text/plain');
     });
 });
 
 function convertHTML() {
     let tempHTML = document.getElementById('htmlInput').value;
+
+    // Add newline after closing header tags
+    tempHTML = tempHTML.replace(/<\/h[1-6]>/gi, match => match + '\n');
 
     // Headings -> Bold
     tempHTML = tempHTML.replace(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/gi, '*$1*');
@@ -90,10 +92,9 @@ function convertHTML() {
     tempHTML = tempHTML.replace(/<(code|pre)[^>]*>([\s\S]*?)<\/\1>/gi, '`$2`');
 
     // Blockquote
-    tempHTML = tempHTML.replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi, function(match, content){
-        // prepend > for each line
-        return content.replace(/^/gm, '> ');
-    });
+    tempHTML = tempHTML.replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi, content =>
+        content.replace(/^/gm, '> ')
+    );
 
     // Line breaks
     tempHTML = tempHTML.replace(/<br\s*\/?>/gi, '\n');
@@ -119,10 +120,15 @@ function convertHTML() {
     // Non-breaking spaces
     tempHTML = tempHTML.replace(/&nbsp;/g, ' ');
 
-    // Trim
+    // Remove spaces inside formatting symbols
+    tempHTML = tempHTML.replace(/\*(\s*[^*]*\S)\s*\*/g, '*$1*'); // Bold
+    tempHTML = tempHTML.replace(/_(\s*[^_]*\S)\s*_+/g, '_$1_');   // Italic
+    tempHTML = tempHTML.replace(/~(\s*[^~]*\S)\s*~/g, '~$1~');    // Strikethrough
+    tempHTML = tempHTML.replace(/`(\s*[^`]*\S)\s*`/g, '`$1`');    // Monospace
+
+    // Trim final string
     tempHTML = tempHTML.trim();
 
-    // Output
     document.getElementById('whatsappOutput').value = tempHTML;
 }
 
