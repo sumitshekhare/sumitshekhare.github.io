@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML to WhatsApp Formatter</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f4;
+        color: #333;
+    }
+    .container {
+        max-width: 800px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 { color: #555; }
+    textarea {
+        width: 98%;
+        height: 200px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 14px;
+        white-space: pre-wrap; /* preserve newlines */
+    }
+    button {
+        padding: 10px 15px;
+        background-color: #25d366;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+    button:hover { background-color: #128c7e; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>HTML to WhatsApp Formatter</h1>
+    <p>Paste your HTML content below and click "Format" to convert it into WhatsApp-friendly text.</p>
+    
+    <h2>Input HTML</h2>
+    <textarea id="htmlInput" placeholder="Paste your copied webpage content here..."></textarea>
+    
+    <button onclick="convertHTML()">Format for WhatsApp</button>
+    
+    <h2>Formatted WhatsApp Text</h2>
+    <textarea id="whatsappOutput" readonly></textarea>
+    <button onclick="copyToClipboard()">Copy to Clipboard</button>
+    <p>This text includes WhatsApp formatting symbols. Copy and paste into WhatsApp to see the formatting.</p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const htmlInput = document.getElementById('htmlInput');
+    htmlInput.addEventListener('paste', (event) => {
+        event.preventDefault();
+        const clipboardData = (event.clipboardData || window.clipboardData);
+        const pastedHTML = clipboardData.getData('text/html');
+        htmlInput.value = pastedHTML || clipboardData.getData('text/plain');
+    });
+});
+
+function convertHTML() {
+    let tempHTML = document.getElementById('htmlInput').value;
+
+    // Headings -> Bold
+    tempHTML = tempHTML.replace(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/gi, '*$1*');
+
+    // Bold
+    tempHTML = tempHTML.replace(/<(b|strong)[^>]*>([\s\S]*?)<\/\1>/gi, '*$2*');
+
+    // Italic
+    tempHTML = tempHTML.replace(/<(i|em)[^>]*>([\s\S]*?)<\/\1>/gi, '_$2_');
+
+    // Strikethrough
+    tempHTML = tempHTML.replace(/<del[^>]*>([\s\S]*?)<\/del>/gi, '~$1~');
+
+    // Monospace (code)
+    tempHTML = tempHTML.replace(/<(code|pre)[^>]*>([\s\S]*?)<\/\1>/gi, '`$2`');
+
+    // Blockquote
+    tempHTML = tempHTML.replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi, function(match, content){
+        // prepend > for each line
+        return content.replace(/^/gm, '> ');
+    });
+
+    // Line breaks
+    tempHTML = tempHTML.replace(/<br\s*\/?>/gi, '\n');
+    tempHTML = tempHTML.replace(/<\/p>/gi, '\n\n');
+
+    // Ordered lists
+    tempHTML = tempHTML.replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, function(match, content){
+        let i = 1;
+        return content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, () => (i++) + ". $1\n");
+    });
+
+    // Unordered lists
+    tempHTML = tempHTML.replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, function(match, content){
+        return content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "• $1\n");
+    });
+
+    // Remove leftover <li>
+    tempHTML = tempHTML.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "• $1\n");
+
+    // Remove remaining HTML tags
+    tempHTML = tempHTML.replace(/<[^>]*>/g, '');
+
+    // Non-breaking spaces
+    tempHTML = tempHTML.replace(/&nbsp;/g, ' ');
+
+    // Trim
+    tempHTML = tempHTML.trim();
+
+    // Output
+    document.getElementById('whatsappOutput').value = tempHTML;
+}
+
+function copyToClipboard() {
+    const output = document.getElementById('whatsappOutput');
+    output.select();
+    output.setSelectionRange(0, 99999); // mobile support
+    navigator.clipboard.writeText(output.value).then(() => alert("Copied to clipboard!"));
+}
+</script>
+</body>
+</html>
