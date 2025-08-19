@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to WhatsApp Formatter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #444;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+            background: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-copy:hover {
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        .formatting-guide {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+
+        .formatting-guide h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .formatting-guide ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .formatting-guide li {
+            padding: 5px 0;
+            color: #555;
+            font-family: monospace;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 HTML to WhatsApp Formatter</h1>
+        
+        <div class="formatting-guide">
+            <h3>📱 WhatsApp Formatting Support</h3>
+            <ul>
+                <li>1. Bold → *text* (&lt;b&gt;, &lt;strong&gt;, &lt;h1&gt;-&lt;h6&gt;)</li>
+                <li>2. Italic → _text_ (&lt;i&gt;, &lt;em&gt;)</li>
+                <li>3. Strikethrough → ~text~ (&lt;del&gt;, &lt;s&gt;)</li>
+                <li>4. Monospace → ```text``` (&lt;code&gt;, &lt;pre&gt;)</li>
+                <li>5. Blockquote → > text (&lt;blockquote&gt;)</li>
+                <li>6. Lists → • item and 1. item</li>
+                <li>7. Line breaks → &lt;br&gt; and &lt;/p&gt; → \n</li>
+            </ul>
+        </div>
+
+        <div class="two-column">
+            <div class="section">
+                <div class="section-title">📝 Paste HTML Code Here</div>
+                <textarea id="htmlInput" placeholder="Paste your HTML code here...
+
+Right-click and use 'Paste Special' → 'Paste as HTML' if available in your browser, or just paste normally."></textarea>
+                <button class="btn" onclick="convertToWhatsApp()">🔄 Convert to WhatsApp Format</button>
+            </div>
+
+            <div class="section">
+                <div class="section-title">💬 WhatsApp Formatted Message</div>
+                <textarea id="whatsappOutput" placeholder="Converted WhatsApp message will appear here..." readonly></textarea>
+                <button class="btn btn-copy" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+                <div id="successMessage" class="success-message">✅ Copied to clipboard!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to check if content already has formatting
+        function hasFormatting(text, symbol) {
+            if (!text) return false;
+            return text.startsWith(symbol) && text.endsWith(symbol);
+        }
+
+        // Helper function to clean existing formatting symbols
+        function cleanExistingFormat(text, symbol) {
+            if (!text) return '';
+            const regex = new RegExp(`^\\${symbol}+|\\${symbol}+$`, 'g');
+            return text.replace(regex, '');
+        }
+
+        function convertToWhatsApp() {
+            const htmlInput = document.getElementById('htmlInput').value;
+            if (!htmlInput.trim()) {
+                alert('Please paste some HTML code first!');
+                return;
+            }
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlInput;
+
+            let result = processNode(tempDiv);
+            
+            result = result
+                .replace(/\n\s*\n\s*\n/g, '\n\n')
+                .replace(/^\s+|\s+$/g, '')
+                .replace(/[ \t]+/g, ' ');
+
+            document.getElementById('whatsappOutput').value = result;
+        }
+
+        function processNode(node) {
+            let result = '';
+            
+            if (!node.childNodes) return '';
+
+            for (let i = 0; i < node.childNodes.length; i++) {
+                const child = node.childNodes[i];
+                if (child.nodeType === Node.TEXT_NODE) {
+                    let text = child.textContent || '';
+                    text = text.replace(/[ \t]+/g, ' ');
+                    result += text;
+                } else if (child.nodeType === Node.ELEMENT_NODE) {
+                    result += processElement(child);
+                }
+            }
+            
+            return result;
+        }
+
+        function processElement(element) {
+            if (!element) return '';
+            
+            const tagName = element.tagName.toLowerCase();
+            let content = processNode(element);
+            let result = '';
+
+            switch (tagName) {
+                case 'b':
+                case 'strong':
+                case 'h1':
+                case 'h2':
+                case 'h3':
+                case 'h4':
+                case 'h5':
+                case 'h6':
+                    if (!hasFormatting(content.trim(), '*')) {
+                        content = cleanExistingFormat(content.trim(), '*');
+                        result = '*' + content + '*';
+                    } else {
+                        result = content;
+                    }
+                    if (tagName.startsWith('h')) {
+                        result += '\n\n';
+                    }
+                    break;
+
+                case 'i':
+                case 'em':
+                    if (!hasFormatting(content.trim(), '_')) {
+                        content = cleanExistingFormat(content.trim(), '_');
+                        result = '_' + content + '_';
+                    } else {
+                        result = content;
+                    }
+                    break;
+
+                case 'del':
+                case 's':
+                case 'strike':
+                    if (!hasFormatting(content.trim(), '~')) {
+                        content = cleanExistingFormat(content.trim(), '~');
+                        result = '~' + content + '~';
+                    } else {
+                        result = content;
+                    }
+                    break;
+
+                case 'code':
+                    if (!hasFormatting(content.trim(), '`')) {
+                        content = cleanExistingFormat(content.trim(), '`');
+                        result = '`' + content + '`';
+                    } else {
+                        result = content;
+                    }
+                    break;
+
+                case 'pre':
+                    if (!content.trim().startsWith('```') || !content.trim().endsWith('```')) {
+                        content = content.replace(/^```|```$/g, '').trim();
+                        result = '```' + content + '```\n';
+                    } else {
+                        result = content + '\n';
+                    }
+                    break;
+
+                case 'blockquote':
+                    const lines = content.split('\n');
+                    result = lines.map(function(line) {
+                        return line.trim() ? '> ' + line.trim() : '';
+                    }).join('\n') + '\n';
+                    break;
+
+                case 'ul':
+                    result = content + '\n';
+                    break;
+
+                case 'ol':
+                    result = content + '\n';
+                    break;
+
+                case 'li':
+                    const parentList = element.parentElement;
+                    if (parentList && parentList.tagName.toLowerCase() === 'ol') {
+                        const items = Array.from(parentList.children).filter(function(child) {
+                            return child.tagName.toLowerCase() === 'li';
+                        });
+                        const index = items.indexOf(element) + 1;
+                        result = index + '. ' + content + '\n';
+                    } else {
+                        result = '• ' + content + '\n';
+                    }
+                    break;
+
+                case 'p':
+                    result = content + '\n\n';
+                    break;
+
+                case 'div':
+                    result = content + '\n';
+                    break;
+
+                case 'br':
+                    result = '\n';
+                    break;
+
+                case 'table':
+                    result = content + '\n';
+                    break;
+
+                case 'tr':
+                    result = content + '\n';
+                    break;
+
+                case 'td':
+                    result = content;
+                    if (element.nextElementSibling) {
+                        result += ' | ';
+                    }
+                    break;
+
+                case 'th':
+                    if (!hasFormatting(content.trim(), '*')) {
+                        content = cleanExistingFormat(content.trim(), '*');
+                        result = '*' + content + '*';
+                    } else {
+                        result = content;
+                    }
+                    if (element.nextElementSibling) {
+                        result += ' | ';
+                    }
+                    break;
+
+                case 'a':
+                    const href = element.getAttribute('href');
+                    if (href && href !== '#') {
+                        result = content + ' (' + href + ')';
+                    } else {
+                        result = content;
+                    }
+                    break;
+
+                case 'img':
+                    const alt = element.getAttribute('alt') || 'Image';
+                    const src = element.getAttribute('src');
+                    if (src) {
+                        result = '📷 ' + alt + ': ' + src + '\n';
+                    } else {
+                        result = '📷 ' + alt + '\n';
+                    }
+                    break;
+
+                case 'span':
+                case 'section':
+                case 'article':
+                case 'header':
+                case 'footer':
+                case 'main':
+                case 'nav':
+                default:
+                    result = content;
+                    break;
+            }
+
+            return result;
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('whatsappOutput');
+            const text = output.value;
+            
+            if (!text.trim()) {
+                alert('Nothing to copy! Please convert HTML first.');
+                return;
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showSuccessMessage();
+                }).catch(function(err) {
+                    fallbackCopyToClipboard(text);
+                });
+            } else {
+                fallbackCopyToClipboard(text);
+            }
+        }
+
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            textArea.style.top = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showSuccessMessage();
+                } else {
+                    alert('Copy failed. Please manually select and copy the text.');
+                }
+            } catch (err) {
+                console.error('Copy failed:', err);
+                alert('Copy failed. Please manually select and copy the text.');
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        function showSuccessMessage() {
+            const message = document.getElementById('successMessage');
+            message.style.display = 'block';
+            setTimeout(function() {
+                message.style.display = 'none';
+            }, 2000);
+        }
+
+        document.getElementById('htmlInput').addEventListener('paste', function(e) {
+            const items = e.clipboardData.items;
+            
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.type === 'text/html') {
+                    e.preventDefault();
+                    const self = this;
+                    item.getAsString(function(htmlData) {
+                        self.value = htmlData;
+                    });
+                    return;
+                }
+            }
+        });
+
+        let convertTimeout;
+        document.getElementById('htmlInput').addEventListener('input', function() {
+            clearTimeout(convertTimeout);
+            const self = this;
+            convertTimeout = setTimeout(function() {
+                if (self.value.trim()) {
+                    convertToWhatsApp();
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
