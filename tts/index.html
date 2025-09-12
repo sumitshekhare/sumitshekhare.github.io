@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <title>Marathi TTS Example</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+    }
+    #textOutput {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+      font-size: 18px;
+      white-space: pre-wrap; /* Keeps line breaks */
+    }
+  </style>
+</head>
+<body>
+
+<p>Translate this page:</p>
+<div id="google_translate_element"></div>
+
+
+<h2>Browser based TTS</h2>
+
+<!--  शाळा हे ज्ञानाचे मंदिर आहे. येथे विद्यार्थी शिक्षण घेतात आणि भविष्यासाठी सज्ज होतात.  -->
+
+<textarea id="marathiText">School is a temple of knowledge. Here students learn and prepare for the future.</textarea>
+<br>
+<button onclick="speakMarathi()">Read Aloud</button>
+
+<!-- New div where textarea content will appear -->
+<div id="textOutput"></div>
+
+<script>
+  const textarea = document.getElementById('marathiText');
+  const outputDiv = document.getElementById('textOutput');
+
+  // Initialize with default textarea value
+  outputDiv.textContent = textarea.value;
+
+  // Update div as textarea changes
+  textarea.addEventListener('input', () => {
+    outputDiv.textContent = textarea.value;
+  });
+
+  function speakMarathi() {
+   const outputDiv = document.getElementById('textOutput');
+    const text = outputDiv.innerText;
+    //const text = textarea.value;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'mr-IN'; // Marathi - India
+
+    const voices = window.speechSynthesis.getVoices();
+    const marathiVoice = voices.find(
+      voice => voice.lang === 'mr-IN' || voice.name.toLowerCase().includes('marathi')
+    );
+    if (marathiVoice) {
+      utterance.voice = marathiVoice;
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Needed on some browsers to load voices first
+  window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+  };
+</script>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'auto'}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>
