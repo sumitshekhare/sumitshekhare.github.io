@@ -1,0 +1,72 @@
+<h2>🌞 Good Morning SMS Collection</h2>
+
+<!-- ✅ Just list your SMS texts -->
+<div id="smsList">
+  <div class="gm-sms">Good Morning! 🌸 May your day be filled with happiness and positivity.</div>
+  <div class="gm-sms">Rise and shine! ☀️ Wishing you a day full of new opportunities.</div>
+  <div class="gm-sms">Good Morning 🌼 Let today bring you endless smiles and success.</div>
+  <div class="gm-sms">Wake up with determination and go to bed with satisfaction. Good Morning!</div>
+  <div class="gm-sms">Every morning is a fresh start. 🌅 Embrace it with gratitude and joy.</div>
+</div>
+
+<script>
+// Add share buttons dynamically
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("#smsList .gm-sms").forEach(function (div) {
+    const text = div.textContent.trim() + "\n more message at http://www.androidcodr.com";
+	const extra = "\n more message at http://www.androidcodr.com";
+    const fullText = text + extra;
+    const encoded = encodeURIComponent(fullText);
+
+    // WhatsApp icon button
+    const wa = document.createElement("a");
+    wa.href = "https://api.whatsapp.com/send?text=" + encoded;
+    wa.className = "icon-btn wa";
+    wa.target = "_blank";
+    wa.innerHTML =
+      '<svg viewBox="0 0 32 32" width="20" height="20" fill="white"><path d="M16 .4C7.4.4.4 7.4.4 16c0 3 .8 5.8 2.3 8.3L0 32l8-2.6c2.3 1.2 5 1.8 8 1.8 8.6 0 15.6-7 15.6-15.6S24.6.4 16 .4zm8.7 22.3c-.4 1.1-2.3 2.1-3.2 2.2-.8.1-1.7.1-2.7-.2-3.1-1-5.7-3.4-7.3-6.3-.2-.3-.4-.8-.4-1.2 0-.4.2-.9.4-1.2.2-.3.5-.6.7-.9.2-.3.4-.6.6-.9.2-.3.4-.6.7-.6.2 0 .5 0 .7.1.2.1.5.9.7 1.2.1.3.1.5 0 .8-.1.2-.1.5-.3.7-.2.2-.4.4-.6.7-.2.3-.1.5 0 .8.6 1 1.3 1.8 2.2 2.5.9.6 1.6 1 1.9.8.3-.2.5-.4.7-.7.2-.3.4-.6.6-.7.2-.1.4 0 .7 0 .2 0 .6.1.9.4.3.2 1.1.9 1.1 1.6 0 .7-.1 1.4-.4 2.1z"/></svg>';
+
+    // Facebook icon button
+    const fb = document.createElement("a");
+    fb.href = "https://www.facebook.com/sharer/sharer.php?u=&quote=" + encoded;
+    fb.className = "icon-btn fb";
+    fb.target = "_blank";
+    fb.innerHTML =
+      '<svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-3h2v-2.3c0-2 1.2-3.1 3-3.1.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.2V12h2.2l-.4 3h-1.8v7A10 10 0 0 0 22 12"/></svg>';
+
+    const wrap = document.createElement("div");
+    wrap.className = "icon-wrap";
+    wrap.appendChild(wa);
+    wrap.appendChild(fb);
+    div.appendChild(wrap);
+  });
+});
+</script>
+
+<style>
+.gm-sms {
+  background:#f9f9f9;
+  border:1px solid #ddd;
+  padding:15px;
+  margin:15px 0;
+  border-radius:8px;
+  font-size:18px;
+  position:relative;
+}
+.icon-wrap {
+  margin-top:8px;
+}
+.icon-btn {
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  margin-right:8px;
+  text-decoration:none;
+}
+.icon-btn.wa { background:#25D366; }
+.icon-btn.fb { background:#3b5998; }
+.icon-btn:hover { opacity:0.8; }
+</style>
