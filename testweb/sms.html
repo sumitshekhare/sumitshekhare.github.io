@@ -2,7 +2,6 @@
 <h2>🌞 Good Morning SMS Collection</h2>
 
 <div id="smsList">
-  <!-- Just list your SMS here (any number) -->
   <div class="gm-sms">Good Morning! 🌸 May your day be filled with happiness and positivity.</div>
   <div class="gm-sms">Rise and shine! ☀️ Wishing you a day full of new opportunities.</div>
   <div class="gm-sms">Good Morning 🌼 Let today bring you endless smiles and success.</div>
@@ -14,77 +13,109 @@
 document.addEventListener("DOMContentLoaded", function () {
   const list = document.getElementById("smsList");
 
-  /* ===== 1️⃣  Shuffle all SMS blocks ===== */
+  // Shuffle the SMS blocks for each visit
   const items = Array.from(list.children);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    list.appendChild(items[j]); // move a random item to end
+    list.appendChild(items[j]);
     items.splice(j, 1);
   }
 
-  /* ===== 2️⃣  Add share buttons ===== */
+  // Add share buttons
   list.querySelectorAll(".gm-sms").forEach(function (div) {
-    const mainText = div.textContent.trim();
-    const extra = "\n\n more message at https://sumitshekhare.github.io/testweb/sms.html";
-    const fullText = mainText + extra;
-    const encoded = encodeURIComponent(fullText);
-
-    const wa = document.createElement("a");
-    wa.href = "https://api.whatsapp.com/send?text=" + encoded;
-    wa.className = "icon-btn wa";
-    wa.target = "_blank";
-    wa.innerHTML =
-      '<svg viewBox="0 0 32 32" class="icon-svg"><path d="M16 .4C7.4.4.4 7.4.4 16c0 3 .8 5.8 2.3 8.3L0 32l8-2.6c2.3 1.2 5 1.8 8 1.8 8.6 0 15.6-7 15.6-15.6S24.6.4 16 .4zm8.7 22.3c-.4 1.1-2.3 2.1-3.2 2.2-.8.1-1.7.1-2.7-.2-3.1-1-5.7-3.4-7.3-6.3-.2-.3-.4-.8-.4-1.2 0-.4.2-.9.4-1.2.2-.3.5-.6.7-.9.2-.3.4-.6.6-.9.2-.3.4-.6.7-.6.2 0 .5 0 .7.1.2.1.5.9.7 1.2.1.3.1.5 0 .8-.1.2-.1.5-.3.7-.2.2-.4.4-.6.7-.2.3-.1.5 0 .8.6 1 1.3 1.8 2.2 2.5.9.6 1.6 1 1.9.8.3-.2.5-.4.7-.7.2-.3.4-.6.6-.7.2-.1.4 0 .7 0 .2 0 .6.1.9.4.3.2 1.1.9 1.1 1.6 0 .7-.1 1.4-.4 2.1z"/></svg>';
-
-    const fb = document.createElement("a");
-    fb.href = "https://www.facebook.com/sharer/sharer.php?u=&quote=" + encoded;
-    fb.className = "icon-btn fb";
-    fb.target = "_blank";
-    fb.innerHTML =
-      '<svg viewBox="0 0 24 24" class="icon-svg"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-3h2v-2.3c0-2 1.2-3.1 3-3.1.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.2V12h2.2l-.4 3h-1.8v7A10 10 0 0 0 22 12"/></svg>';
+    const text = div.textContent.trim() + "\n\nmore message at http://www.androidcodr.com";
+    const encoded = encodeURIComponent(text);
 
     const wrap = document.createElement("div");
-    wrap.className = "icon-wrap";
-    wrap.appendChild(wa);
-    wrap.appendChild(fb);
+    wrap.className = "share-wrap";
+
+    wrap.innerHTML += `<a class="share-btn fb" target="_blank"
+       href="https://www.facebook.com/sharer/sharer.php?u=&quote=${encoded}">
+       <i class="fab fa-facebook-f"></i></a>`;
+
+    wrap.innerHTML += `<a class="share-btn tw" target="_blank"
+       href="https://twitter.com/intent/tweet?text=${encoded}">
+       <i class="fab fa-twitter"></i></a>`;
+
+    wrap.innerHTML += `<a class="share-btn wa" target="_blank"
+       href="https://api.whatsapp.com/send?text=${encoded}">
+       <i class="fab fa-whatsapp"></i></a>`;
+
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "share-btn copy";
+    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+    copyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(text).then(() =>
+        alert("Message copied to clipboard!")
+      );
+    });
+
+    wrap.appendChild(copyBtn);
     div.appendChild(wrap);
   });
 });
 </script>
 
+<!-- Font Awesome for icons -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
 <style>
+/* SMS card style */
 .gm-sms {
   background:#f9f9f9;
   border:1px solid #ddd;
   padding:1rem;
   margin:1rem 0;
   border-radius:8px;
-  font-size:1.1rem;
+  font-size:1.3rem;
 }
-.icon-wrap {
-  margin-top:0.5rem;
+
+/* Container for the icon buttons */
+.share-wrap {
+  margin-top:0.7rem;
   display:flex;
-  gap:0.75rem;
+  flex-wrap:wrap;
+  gap:0.5rem;
 }
-.icon-btn {
+
+/* === Share Button Base === */
+.share-btn {
   display:inline-flex;
   justify-content:center;
   align-items:center;
-  width:3rem;
-  height:3rem;
-  border-radius:50%;
+  width:70px;          /* Rectangle width */
+  height:15px;         /* Rectangle height */
+  border:none;
+  border-radius:3px;
+  padding:4px;
+  color:#fff;
   text-decoration:none;
+  cursor:pointer;
+  font-size:15px;
 }
-.icon-btn.wa { background:#25D366; }
-.icon-btn.fb { background:#3b5998; }
-.icon-svg {
-  width:55%;
-  height:55%;
-  fill:#fff;
+.share-btn i {
+  font-size:1em;       /* 1em = parent's font-size */
+  line-height:1;
+  font-size:15px;
 }
-@media (max-width: 600px) {
-  .gm-sms { font-size:1rem; padding:0.75rem; }
-  .icon-btn { width:3.5rem; height:3.5rem; }
-  .icon-svg { width:60%; height:60%; }
+
+/* Brand colors */
+.fb    { background:#3b5998; }
+.tw    { background:#1da1f2; }
+.wa    { background:#25d366; }
+.copy  { background:#555; font-size:15px;height:23px; padding:4px;}
+
+.share-btn:hover { opacity:0.9; }
+
+/* --- Responsive --- */
+@media (max-width:600px){
+  .gm-sms { font-size:1.3rem; padding:0.8rem; }
+  .share-btn {
+    width:70px;
+    height:15px;
+    font-size:15px;
+  }
+  .copy  { background:#555; font-size:15px;height:23px; padding:4px;}
 }
 </style>
