@@ -1,0 +1,866 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Sticker Maker</title>
+	 <!--<link rel="preload" href="https://fonts.googleapis.com">
+	<link rel="preload" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Creepster&family=Fredoka+One&family=Lobster&family=Pacifico&family=Righteous&family=Russo+One&family=Shadows+Into+Light&family=Monoton&family=Bungee&family=Kalam:wght@700&family=Caveat:wght@700&display=swap" rel="stylesheet">  -->
+	
+
+  <!-- Preconnect to improve loading speed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Load all Google Fonts in one request -->
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka+One&family=Lobster&family=Pacifico&family=Righteous&family=Russo+One&family=Bungee&family=Monoton&family=Creepster&family=Shadows+Into+Light&family=Kalam&family=Caveat&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .title {
+            text-align: center;
+            color: #075e54;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            align-items: start;
+            max-width: 100%;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: #f0f0f0;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #stickerCanvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-image: 
+                linear-gradient(45deg, #cccccc 25%, transparent 25%), 
+                linear-gradient(-45deg, #cccccc 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #cccccc 75%), 
+                linear-gradient(-45deg, transparent 75%, #cccccc 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: #ffffff;
+            cursor: move;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            width: 300px;
+            max-width: 300px;
+            min-width: 280px;
+            max-height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 20px;
+            box-sizing: border-box;
+        }
+
+        .control-group {
+            margin-bottom: 18px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #075e54;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"], textarea, input[type="range"], select {
+            width: 100%;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        input[type="text"], textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #25d366;
+        }
+
+        input[type="range"] {
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            margin: 8px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #25d366;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"]:hover {
+            border-color: #25d366;
+            background: #f0fff4;
+        }
+
+        .clear-bg-btn {
+            padding: 8px 12px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .clear-bg-btn:hover {
+            background: #c82333;
+        }
+
+        .crop-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .crop-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+        }
+
+        .crop-canvas-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        #cropCanvas {
+            border: 2px solid #ddd;
+            max-width: 600px;
+            max-height: 600px;
+        }
+
+        .crop-overlay {
+            position: absolute;
+            border: 2px solid #25d366;
+            background: rgba(37, 211, 102, 0.1);
+            cursor: move;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        }
+
+        .crop-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #25d366;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: nw-resize;
+        }
+
+        .crop-handle.nw { top: -6px; left: -6px; cursor: nw-resize; }
+        .crop-handle.ne { top: -6px; right: -6px; cursor: ne-resize; }
+        .crop-handle.sw { bottom: -6px; left: -6px; cursor: sw-resize; }
+        .crop-handle.se { bottom: -6px; right: -6px; cursor: se-resize; }
+
+        .crop-buttons {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .crop-btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .crop-btn.confirm {
+            background: #25d366;
+            color: white;
+        }
+
+        .crop-btn.confirm:hover {
+            background: #128c7e;
+        }
+
+        .crop-btn.cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .crop-btn.cancel:hover {
+            background: #545b62;
+        }
+
+        .color-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .color-group label {
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #25d366;
+        }
+
+        .slider-value {
+            display: inline-block;
+            background: #25d366;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 211, 102, 0.3);
+        }
+
+        .save-btn:active {
+            transform: translateY(0);
+        }
+
+        .drag-info {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+            
+            .controls {
+                position: static;
+                max-height: none;
+                width: 100%;
+                max-width: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2em;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🎨 WhatsApp Sticker Maker</h1>
+        
+        <div class="workspace">
+            <div class="canvas-container">
+                <canvas id="stickerCanvas" width="512" height="512"></canvas>
+                <div class="drag-info">💡 Drag text to move it around</div>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="imageUpload">🖼️ Background Image:</label>
+                    <input type="file" id="imageUpload" accept="image/*">
+                    <button id="clearBgBtn" class="clear-bg-btn">🗑️ Clear Background</button>
+                </div>
+                
+                <div class="control-group">
+                    <label for="textInput">✏️ Your Text:</label>
+                    <textarea id="textInput" placeholder="Enter your sticker text...&#10;Use Enter for new lines" rows="3">Hello Sticker ✨</textarea>
+                </div>
+                
+                <div class="control-group">
+                    <label for="fontSizeSlider">📏 Font Size: <span class="slider-value" id="fontSizeValue">48</span>px</label>
+                    <input type="range" id="fontSizeSlider" min="20" max="100" value="48">
+                </div>
+                
+                <div class="control-group">
+                    <label for="rotationSlider">🔄 Rotation: <span class="slider-value" id="rotationValue">0</span>°</label>
+                    <input type="range" id="rotationSlider" min="-180" max="180" value="0">
+                </div>
+                
+                <div class="control-group">
+                    <label for="verticalSlider">⬆️ Vertical Position: <span class="slider-value" id="verticalValue">50</span>%</label>
+                    <input type="range" id="verticalSlider" min="0" max="100" value="50">
+                </div>
+                
+                <div class="control-group">
+                    <label for="horizontalSlider">⬅️ Horizontal Position: <span class="slider-value" id="horizontalValue">50</span>%</label>
+                    <input type="range" id="horizontalSlider" min="0" max="100" value="50">
+                </div>
+                
+                <div class="control-group">
+                    <div class="color-group">
+                        <label for="fillColorPicker">🎨 Text Color:</label>
+                        <input type="color" id="fillColorPicker" value="#ffffff">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="strokeWidthSlider">🖌️ Border Thickness: <span class="slider-value" id="strokeWidthValue">3</span>px</label>
+                    <input type="range" id="strokeWidthSlider" min="0" max="15" value="3">
+                </div>
+                
+                <div class="control-group">
+                    <div class="color-group">
+                        <label for="strokeColorPicker">✏️ Outline Color:</label>
+                        <input type="color" id="strokeColorPicker" value="#000000">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="fontSelect">🎭 Font Style:</label>
+                    <select id="fontSelect">
+                        <optgroup label="Standard Fonts">
+                            <option value="Arial">Arial</option>
+                            <option value="Impact">Impact</option>
+                            <option value="Arial Black">Arial Black</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                        </optgroup>
+                        <optgroup label="Stylish Google Fonts">
+                            <option value="Bangers">🎯 Bangers - Comic Style</option>
+                            <option value="Fredoka One">🎈 Fredoka One - Playful</option>
+                            <option value="Lobster">🦞 Lobster - Elegant Script</option>
+                            <option value="Pacifico">🌴 Pacifico - Beach Vibes</option>
+                            <option value="Righteous">⚡ Righteous - Bold & Modern</option>
+                            <option value="Russo One">🏁 Russo One - Racing Style</option>
+                            <option value="Bungee">🎪 Bungee - Circus Fun</option>
+                            <option value="Monoton">🌈 Monoton - Neon Glow</option>
+                            <option value="Creepster">👻 Creepster - Spooky</option>
+                            <option value="Shadows Into Light">✍️ Shadows - Handwritten</option>
+                            <option value="Kalam">📝 Kalam - Casual Handwriting</option>
+                            <option value="Caveat">💫 Caveat - Signature Style</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <button class="save-btn" id="saveBtn">💾 Save as PNG (512x512)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crop Modal -->
+    <div class="crop-modal" id="cropModal">
+        <div class="crop-container">
+            <h3 style="text-align: center; color: #075e54; margin-bottom: 10px;">✂️ Crop Image to Square</h3>
+            <p style="text-align: center; color: #666; margin-bottom: 15px;">Drag the corners to adjust the crop area</p>
+            <div class="crop-canvas-container" id="cropCanvasContainer">
+                <canvas id="cropCanvas"></canvas>
+                <div class="crop-overlay" id="cropOverlay">
+                    <div class="crop-handle nw"></div>
+                    <div class="crop-handle ne"></div>
+                    <div class="crop-handle sw"></div>
+                    <div class="crop-handle se"></div>
+                </div>
+            </div>
+            <div class="crop-buttons">
+                <button class="crop-btn confirm" id="confirmCrop">✅ Use This Crop</button>
+                <button class="crop-btn cancel" id="cancelCrop">❌ Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('stickerCanvas');
+        const ctx = canvas.getContext('2d');
+        const textInput = document.getElementById('textInput');
+        const fontSizeSlider = document.getElementById('fontSizeSlider');
+        const rotationSlider = document.getElementById('rotationSlider');
+        const verticalSlider = document.getElementById('verticalSlider');
+        const horizontalSlider = document.getElementById('horizontalSlider');
+        const fontSelect = document.getElementById('fontSelect');
+        const fillColorPicker = document.getElementById('fillColorPicker');
+        const strokeColorPicker = document.getElementById('strokeColorPicker');
+        const strokeWidthSlider = document.getElementById('strokeWidthSlider');
+        const saveBtn = document.getElementById('saveBtn');
+        const imageUpload = document.getElementById('imageUpload');
+        const clearBgBtn = document.getElementById('clearBgBtn');
+
+        // Crop modal elements
+        const cropModal = document.getElementById('cropModal');
+        const cropCanvas = document.getElementById('cropCanvas');
+        const cropCtx = cropCanvas.getContext('2d');
+        const cropOverlay = document.getElementById('cropOverlay');
+        const confirmCrop = document.getElementById('confirmCrop');
+        const cancelCrop = document.getElementById('cancelCrop');
+
+        // Value display elements
+        const fontSizeValue = document.getElementById('fontSizeValue');
+        const rotationValue = document.getElementById('rotationValue');
+        const verticalValue = document.getElementById('verticalValue');
+        const horizontalValue = document.getElementById('horizontalValue');
+        const strokeWidthValue = document.getElementById('strokeWidthValue');
+
+        // Drag functionality
+        let isDragging = false;
+        let dragX = 0;
+        let dragY = 0;
+        let textX = 256; // Center X
+        let textY = 256; // Center Y
+        
+        // Background image
+        let backgroundImage = null;
+        
+        // Crop functionality
+        let cropImage = null;
+        let cropX = 50;
+        let cropY = 50;
+        let cropSize = 200;
+        let isDraggingCrop = false;
+        let isResizingCrop = false;
+        let cropStartX, cropStartY;
+        let resizeHandle = null;
+
+        function drawText() {
+            // Clear canvas with transparent background
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background image if exists
+            if (backgroundImage) {
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            }
+            
+            // Get current values
+            const text = textInput.value || 'Hello World!';
+            const fontSize = parseInt(fontSizeSlider.value);
+            const rotation = parseInt(rotationSlider.value);
+            const font = fontSelect.value;
+            const fillColor = fillColorPicker.value;
+            const strokeColor = strokeColorPicker.value;
+            const strokeWidth = parseInt(strokeWidthSlider.value);
+            
+            // Update slider value displays
+            fontSizeValue.textContent = fontSize;
+            rotationValue.textContent = rotation;
+            verticalValue.textContent = verticalSlider.value;
+            horizontalValue.textContent = horizontalSlider.value;
+            strokeWidthValue.textContent = strokeWidth;
+            
+            // Calculate position from sliders if not dragging
+            if (!isDragging) {
+                textX = (parseInt(horizontalSlider.value) / 100) * canvas.width;
+                textY = (parseInt(verticalSlider.value) / 100) * canvas.height;
+            }
+            
+            // Save context
+            ctx.save();
+            
+            // Set font
+            ctx.font = `bold ${fontSize}px ${font}`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Move to text position and rotate
+            ctx.translate(textX, textY);
+            ctx.rotate((rotation * Math.PI) / 180);
+            
+            // Split text by line breaks
+            const lines = text.split('\n');
+            const lineHeight = fontSize * 1.2; // 20% extra space between lines
+            const totalHeight = lines.length * lineHeight;
+            const startY = -totalHeight / 2 + lineHeight / 2;
+            
+            // Set colors and stroke width
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = strokeWidth;
+            ctx.fillStyle = fillColor;
+            
+            // Draw each line
+            lines.forEach((line, index) => {
+                const y = startY + (index * lineHeight);
+                if (strokeWidth > 0) {
+                    ctx.strokeText(line, 0, y);
+                }
+                ctx.fillText(line, 0, y);
+            });
+            
+            // Restore context
+            ctx.restore();
+        }
+
+        // Event listeners for real-time updates
+        textInput.addEventListener('input', drawText);
+        fontSizeSlider.addEventListener('input', drawText);
+        rotationSlider.addEventListener('input', drawText);
+        verticalSlider.addEventListener('input', drawText);
+        horizontalSlider.addEventListener('input', drawText);
+        fontSelect.addEventListener('change', drawText);
+        fillColorPicker.addEventListener('change', drawText);
+        strokeColorPicker.addEventListener('change', drawText);
+        strokeWidthSlider.addEventListener('input', drawText);
+
+        // Image upload functionality
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        cropImage = img;
+                        showCropModal();
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Clear background
+        clearBgBtn.addEventListener('click', () => {
+            backgroundImage = null;
+            drawText();
+        });
+
+        function showCropModal() {
+            // Calculate display size while maintaining aspect ratio
+            const maxSize = 600;
+            let displayWidth, displayHeight;
+            
+            if (cropImage.width > cropImage.height) {
+                displayWidth = Math.min(maxSize, cropImage.width);
+                displayHeight = (cropImage.height / cropImage.width) * displayWidth;
+            } else {
+                displayHeight = Math.min(maxSize, cropImage.height);
+                displayWidth = (cropImage.width / cropImage.height) * displayHeight;
+            }
+            
+            cropCanvas.width = displayWidth;
+            cropCanvas.height = displayHeight;
+            
+            // Draw image on crop canvas
+            cropCtx.drawImage(cropImage, 0, 0, displayWidth, displayHeight);
+            
+            // Set initial crop area (square in center)
+            const minDimension = Math.min(displayWidth, displayHeight);
+            cropSize = minDimension * 0.6;
+            cropX = (displayWidth - cropSize) / 2;
+            cropY = (displayHeight - cropSize) / 2;
+            
+            updateCropOverlay();
+            cropModal.style.display = 'flex';
+        }
+
+        function updateCropOverlay() {
+            cropOverlay.style.left = cropX + 'px';
+            cropOverlay.style.top = cropY + 'px';
+            cropOverlay.style.width = cropSize + 'px';
+            cropOverlay.style.height = cropSize + 'px';
+        }
+
+        // Crop overlay event listeners
+        cropOverlay.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('crop-handle')) {
+                isResizingCrop = true;
+                resizeHandle = e.target.className.split(' ')[1];
+            } else {
+                isDraggingCrop = true;
+            }
+            cropStartX = e.clientX;
+            cropStartY = e.clientY;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingCrop) {
+                const deltaX = e.clientX - cropStartX;
+                const deltaY = e.clientY - cropStartY;
+                
+                cropX = Math.max(0, Math.min(cropCanvas.width - cropSize, cropX + deltaX));
+                cropY = Math.max(0, Math.min(cropCanvas.height - cropSize, cropY + deltaY));
+                
+                updateCropOverlay();
+                cropStartX = e.clientX;
+                cropStartY = e.clientY;
+            } else if (isResizingCrop && resizeHandle) {
+                const deltaX = e.clientX - cropStartX;
+                const deltaY = e.clientY - cropStartY;
+                const delta = Math.max(deltaX, deltaY);
+                
+                const newSize = Math.max(50, Math.min(
+                    Math.min(cropCanvas.width - cropX, cropCanvas.height - cropY),
+                    cropSize + delta
+                ));
+                
+                cropSize = newSize;
+                updateCropOverlay();
+                cropStartX = e.clientX;
+                cropStartY = e.clientY;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDraggingCrop = false;
+            isResizingCrop = false;
+            resizeHandle = null;
+        });
+
+        // Crop modal buttons
+        confirmCrop.addEventListener('click', () => {
+            // Calculate crop ratios
+            const scaleX = cropImage.width / cropCanvas.width;
+            const scaleY = cropImage.height / cropCanvas.height;
+            
+            // Create cropped image
+            const croppedCanvas = document.createElement('canvas');
+            croppedCanvas.width = 512;
+            croppedCanvas.height = 512;
+            const croppedCtx = croppedCanvas.getContext('2d');
+            
+            // Draw cropped portion
+            croppedCtx.drawImage(
+                cropImage,
+                cropX * scaleX, cropY * scaleY, cropSize * scaleX, cropSize * scaleY,
+                0, 0, 512, 512
+            );
+            
+            // Create background image
+            backgroundImage = new Image();
+            backgroundImage.onload = () => {
+                drawText();
+            };
+            backgroundImage.src = croppedCanvas.toDataURL();
+            
+            cropModal.style.display = 'none';
+        });
+
+        cancelCrop.addEventListener('click', () => {
+            cropModal.style.display = 'none';
+        });
+
+        // Close modal on background click
+        cropModal.addEventListener('click', (e) => {
+            if (e.target === cropModal) {
+                cropModal.style.display = 'none';
+            }
+        });
+
+        // Drag functionality
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // Check if click is near text (simple distance check)
+            const distance = Math.sqrt((mouseX - textX) ** 2 + (mouseY - textY) ** 2);
+            if (distance < 50) { // 50px tolerance
+                isDragging = true;
+                dragX = mouseX - textX;
+                dragY = mouseY - textY;
+                canvas.style.cursor = 'grabbing';
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            if (isDragging) {
+                textX = mouseX - dragX;
+                textY = mouseY - dragY;
+                
+                // Keep text within canvas bounds
+                textX = Math.max(50, Math.min(canvas.width - 50, textX));
+                textY = Math.max(50, Math.min(canvas.height - 50, textY));
+                
+                // Update sliders to match drag position
+                horizontalSlider.value = Math.round((textX / canvas.width) * 100);
+                verticalSlider.value = Math.round((textY / canvas.height) * 100);
+                
+                drawText();
+            } else {
+                // Change cursor when hovering over text
+                const distance = Math.sqrt((mouseX - textX) ** 2 + (mouseY - textY) ** 2);
+                canvas.style.cursor = distance < 50 ? 'grab' : 'move';
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            canvas.style.cursor = 'move';
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+            canvas.style.cursor = 'move';
+        });
+
+        // Touch support for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const mouseX = touch.clientX - rect.left;
+            const mouseY = touch.clientY - rect.top;
+            
+            const distance = Math.sqrt((mouseX - textX) ** 2 + (mouseY - textY) ** 2);
+            if (distance < 50) {
+                isDragging = true;
+                dragX = mouseX - textX;
+                dragY = mouseY - textY;
+            }
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (isDragging) {
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const mouseX = touch.clientX - rect.left;
+                const mouseY = touch.clientY - rect.top;
+                
+                textX = mouseX - dragX;
+                textY = mouseY - dragY;
+                
+                textX = Math.max(50, Math.min(canvas.width - 50, textX));
+                textY = Math.max(50, Math.min(canvas.height - 50, textY));
+                
+                horizontalSlider.value = Math.round((textX / canvas.width) * 100);
+                verticalSlider.value = Math.round((textY / canvas.height) * 100);
+                
+                drawText();
+            }
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isDragging = false;
+        });
+
+        // Save as PNG
+        saveBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = `whatsapp-sticker-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        // Initial draw
+        drawText();
+    </script>
+</body>
+</html>
