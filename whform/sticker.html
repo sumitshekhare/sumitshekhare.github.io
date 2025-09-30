@@ -1,15 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp Sticker Maker</title>
-	 <!--<link rel="preload" href="https://fonts.googleapis.com">
-	<link rel="preload" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Creepster&family=Fredoka+One&family=Lobster&family=Pacifico&family=Righteous&family=Russo+One&family=Shadows+Into+Light&family=Monoton&family=Bungee&family=Kalam:wght@700&family=Caveat:wght@700&display=swap" rel="stylesheet">  -->
 	
-
   <!-- Preconnect to improve loading speed -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -607,7 +602,12 @@
         rotationSlider.addEventListener('input', drawText);
         verticalSlider.addEventListener('input', drawText);
         horizontalSlider.addEventListener('input', drawText);
-        fontSelect.addEventListener('change', drawText);
+        fontSelect.addEventListener('change', async () => {
+            // Wait for font to load before drawing
+            const selectedFont = fontSelect.value;
+            await document.fonts.load(`bold 48px ${selectedFont}`);
+            drawText();
+        });
         fillColorPicker.addEventListener('change', drawText);
         strokeColorPicker.addEventListener('change', drawText);
         strokeWidthSlider.addEventListener('input', drawText);
@@ -863,4 +863,4 @@
         drawText();
     </script>
 </body>
-</html>
+</html> 
