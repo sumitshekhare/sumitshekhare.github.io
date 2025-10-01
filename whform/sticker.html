@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp Sticker Maker</title>
 	
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Akshar:wght@300..700&family=Amita:wght@400;700&family=Anek+Devanagari:wght@100..800&family=Arya:wght@700&family=Eczar:wght@400..800&family=Gajraj+One&family=Hind:wght@500&family=Jaini&family=Kalam&family=Khand:wght@500&family=Laila:wght@600&family=Martel:wght@600&family=Modak&family=Mukta:wght@600&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Palanquin+Dark:wght@500&family=Poppins&family=Rozha+One&family=Tillana:wght@500&family=Tiro+Devanagari+Sanskrit&family=Yantramanav:wght@500&family=Yatra+One&display=swap" rel="stylesheet">
+  <!-- Preconnect to improve loading speed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Load all Google Fonts in one request -->
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka+One&family=Lobster&family=Pacifico&family=Righteous&family=Russo+One&family=Bungee&family=Monoton&family=Creepster&family=Shadows+Into+Light&family=Kalam&family=Caveat&display=swap" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -346,15 +350,97 @@
                 width: 100%;
                 max-width: 500px;
             }
+            
+            .canvas-container {
+                width: 100%;
+                max-width: 500px;
+            }
+            
+            #stickerCanvas {
+                width: 100%;
+                height: auto;
+                max-width: 500px;
+            }
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
             .title {
-                font-size: 2em;
+                font-size: 1.8em;
+                margin-bottom: 20px;
             }
             
             .container {
-                padding: 20px;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            
+            .canvas-container {
+                padding: 15px;
+                width: 100%;
+            }
+            
+            #stickerCanvas {
+                width: 100%;
+                height: auto;
+                max-width: 100%;
+            }
+            
+            .controls {
+                width: 100%;
+                max-width: 100%;
+                padding: 15px;
+            }
+            
+            .drag-info {
+                font-size: 11px;
+                margin-top: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .canvas-container {
+                padding: 10px;
+            }
+            
+            .controls {
+                padding: 12px;
+            }
+            
+            .control-group {
+                margin-bottom: 15px;
+            }
+            
+            .control-group label {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+            
+            input[type="text"], textarea, select {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .save-btn {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .slider-value {
+                font-size: 11px;
+                padding: 3px 6px;
             }
         }
     </style>
@@ -431,31 +517,20 @@
                             <option value="Times New Roman">Times New Roman</option>
                             <option value="Georgia">Georgia</option>
                         </optgroup>
-                      <optgroup label="Google Fonts Collection">
-  <option value="Akshar">✨ Akshar - Clean & Modern</option>
-  <option value="Amita">🌸 Amita - Elegant Calligraphy</option>
-  <option value="Anek Devanagari">🪔 Anek Devanagari - Multilingual Sans</option>
-  <option value="Arya">💎 Arya - Bold Simplicity</option>
-  <option value="Eczar">📚 Eczar - Classic Serif</option>
-  <option value="Gajraj One">🛕 Gajraj One - Decorative Headline</option>
-  <option value="Hind">📰 Hind - Readable Text</option>
-  <option value="Jaini">🎨 Jaini - Playful Display</option>
-  <option value="Kalam">📝 Kalam - Casual Handwriting</option>
-  <option value="Khand">🏗️ Khand - Strong & Structured</option>
-  <option value="Laila">🌺 Laila - Stylish Serif</option>
-  <option value="Martel">📖 Martel - Formal Serif</option>
-  <option value="Modak">🍩 Modak - Chunky & Fun</option>
-  <option value="Mukta">⚖️ Mukta - Balanced Sans</option>
-  <option value="Noto Sans">🌍 Noto Sans - Universal Typeface</option>
-  <option value="Palanquin Dark">🖤 Palanquin Dark - Bold Display</option>
-  <option value="Poppins">🎯 Poppins - Modern Geometric</option>
-  <option value="Rozha One">👑 Rozha One - High Contrast Serif</option>
-  <option value="Tillana">💃 Tillana - Dance & Flow</option>
-  <option value="Tiro Devanagari Sanskrit">📜 Tiro Sanskrit - Traditional Text</option>
-  <option value="Yantramanav">🤖 Yantramanav - Tech Inspired</option>
-  <option value="Yatra One">🚩 Yatra One - Decorative Title</option>
-</optgroup>
-
+                        <optgroup label="Stylish Google Fonts">
+                            <option value="Bangers">🎯 Bangers - Comic Style</option>
+                            <option value="Fredoka One">🎈 Fredoka One - Playful</option>
+                            <option value="Lobster">🦞 Lobster - Elegant Script</option>
+                            <option value="Pacifico">🌴 Pacifico - Beach Vibes</option>
+                            <option value="Righteous">⚡ Righteous - Bold & Modern</option>
+                            <option value="Russo One">🏁 Russo One - Racing Style</option>
+                            <option value="Bungee">🎪 Bungee - Circus Fun</option>
+                            <option value="Monoton">🌈 Monoton - Neon Glow</option>
+                            <option value="Creepster">👻 Creepster - Spooky</option>
+                            <option value="Shadows Into Light">✍️ Shadows - Handwritten</option>
+                            <option value="Kalam">📝 Kalam - Casual Handwriting</option>
+                            <option value="Caveat">💫 Caveat - Signature Style</option>
+                        </optgroup>
                     </select>
                 </div>
                 
@@ -870,4 +945,4 @@
         drawText();
     </script>
 </body>
-</html> 
+</html>
