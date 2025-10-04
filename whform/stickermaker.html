@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Load all Google Fonts in one request -->
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka+One&family=Lobster&family=Pacifico&family=Righteous&family=Russo+One&family=Bungee&family=Monoton&family=Creepster&family=Shadows+Into+Light&family=Kalam&family=Caveat&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Akshar&family=Amita&family=Anek+Devanagari&family=Arya&family=Eczar&family=Gajraj+One&family=Hind&family=Jaini&family=Kalam&family=Khand&family=Laila&family=Martel&family=Modak&family=Mukta&family=Noto+Sans&family=Palanquin+Dark&family=Poppins&family=Rozha+One&family=Tillana&family=Tiro+Devanagari+Sanskrit&family=Yantramanav&family=Yatra+One&family=Bangers&family=Fredoka+One&family=Lobster&family=Pacifico&family=Righteous&family=Russo+One&family=Bungee&family=Monoton&family=Creepster&family=Shadows+Into+Light&family=Kalam&family=Caveat&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -338,7 +338,7 @@
             font-style: italic;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 2024px) {
             .workspace {
                 grid-template-columns: 1fr;
                 justify-items: center;
@@ -517,7 +517,7 @@
                             <option value="Times New Roman">Times New Roman</option>
                             <option value="Georgia">Georgia</option>
                         </optgroup>
-                        <optgroup label="Stylish Google Fonts">
+						 <optgroup label="Stylish Google Fonts">
                             <option value="Bangers">🎯 Bangers - Comic Style</option>
                             <option value="Fredoka One">🎈 Fredoka One - Playful</option>
                             <option value="Lobster">🦞 Lobster - Elegant Script</option>
@@ -530,6 +530,30 @@
                             <option value="Shadows Into Light">✍️ Shadows - Handwritten</option>
                             <option value="Kalam">📝 Kalam - Casual Handwriting</option>
                             <option value="Caveat">💫 Caveat - Signature Style</option>
+                        </optgroup>
+                        <optgroup label="Hindi/Devanagari Fonts">
+                            <option value="Akshar">✨ Akshar - Clean & Modern</option>
+                            <option value="Amita">🌸 Amita - Elegant Calligraphy</option>
+                            <option value="Anek Devanagari">🪔 Anek Devanagari - Multilingual Sans</option>
+                            <option value="Arya">💎 Arya - Bold Simplicity</option>
+                            <option value="Eczar">📚 Eczar - Classic Serif</option>
+                            <option value="Gajraj One">🛕 Gajraj One - Decorative Headline</option>
+                            <option value="Hind">📰 Hind - Readable Text</option>
+                            <option value="Jaini">🎨 Jaini - Playful Display</option>
+                            <option value="Kalam">📝 Kalam - Casual Handwriting</option>
+                            <option value="Khand">🏗️ Khand - Strong & Structured</option>
+                            <option value="Laila">🌺 Laila - Stylish Serif</option>
+                            <option value="Martel">📖 Martel - Formal Serif</option>
+                            <option value="Modak">🍩 Modak - Chunky & Fun</option>
+                            <option value="Mukta">⚖️ Mukta - Balanced Sans</option>
+                            <option value="Noto Sans">🌍 Noto Sans - Universal Typeface</option>
+                            <option value="Palanquin Dark">🖤 Palanquin Dark - Bold Display</option>
+                            <option value="Poppins">🎯 Poppins - Modern Geometric</option>
+                            <option value="Rozha One">👑 Rozha One - High Contrast Serif</option>
+                            <option value="Tillana">💃 Tillana - Dance & Flow</option>
+                            <option value="Tiro Devanagari Sanskrit">📜 Tiro Sanskrit - Traditional Text</option>
+                            <option value="Yantramanav">🤖 Yantramanav - Tech Inspired</option>
+                            <option value="Yatra One">🚩 Yatra One - Decorative Title</option>
                         </optgroup>
                     </select>
                 </div>
@@ -595,8 +619,8 @@
         let isDragging = false;
         let dragX = 0;
         let dragY = 0;
-        let textX = 256; // Center X
-        let textY = 256; // Center Y
+        let textX = 256;
+        let textY = 256;
         
         // Background image
         let backgroundImage = null;
@@ -612,15 +636,12 @@
         let resizeHandle = null;
 
         function drawText() {
-            // Clear canvas with transparent background
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw background image if exists
             if (backgroundImage) {
                 ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
             }
             
-            // Get current values
             const text = textInput.value || 'Hello World!';
             const fontSize = parseInt(fontSizeSlider.value);
             const rotation = parseInt(rotationSlider.value);
@@ -629,43 +650,35 @@
             const strokeColor = strokeColorPicker.value;
             const strokeWidth = parseInt(strokeWidthSlider.value);
             
-            // Update slider value displays
             fontSizeValue.textContent = fontSize;
             rotationValue.textContent = rotation;
             verticalValue.textContent = verticalSlider.value;
             horizontalValue.textContent = horizontalSlider.value;
             strokeWidthValue.textContent = strokeWidth;
             
-            // Calculate position from sliders if not dragging
             if (!isDragging) {
                 textX = (parseInt(horizontalSlider.value) / 100) * canvas.width;
                 textY = (parseInt(verticalSlider.value) / 100) * canvas.height;
             }
             
-            // Save context
             ctx.save();
-            
-            // Set font
-            ctx.font = `bold ${fontSize}px ${font}`;
+            // Wrap font name in quotes if it contains spaces
+            const fontName = font.includes(' ') ? `"${font}"` : font;
+            ctx.font = `bold ${fontSize}px ${fontName}`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            
-            // Move to text position and rotate
             ctx.translate(textX, textY);
             ctx.rotate((rotation * Math.PI) / 180);
             
-            // Split text by line breaks
             const lines = text.split('\n');
-            const lineHeight = fontSize * 1.2; // 20% extra space between lines
+            const lineHeight = fontSize * 1.2;
             const totalHeight = lines.length * lineHeight;
             const startY = -totalHeight / 2 + lineHeight / 2;
             
-            // Set colors and stroke width
             ctx.strokeStyle = strokeColor;
             ctx.lineWidth = strokeWidth;
             ctx.fillStyle = fillColor;
             
-            // Draw each line
             lines.forEach((line, index) => {
                 const y = startY + (index * lineHeight);
                 if (strokeWidth > 0) {
@@ -674,27 +687,28 @@
                 ctx.fillText(line, 0, y);
             });
             
-            // Restore context
             ctx.restore();
         }
 
-        // Event listeners for real-time updates
+        // Event listeners
         textInput.addEventListener('input', drawText);
         fontSizeSlider.addEventListener('input', drawText);
         rotationSlider.addEventListener('input', drawText);
         verticalSlider.addEventListener('input', drawText);
         horizontalSlider.addEventListener('input', drawText);
-        fontSelect.addEventListener('change', async () => {
-            // Wait for font to load before drawing
+        fontSelect.addEventListener('change', () => {
             const selectedFont = fontSelect.value;
-            await document.fonts.load(`bold 48px ${selectedFont}`);
+            // Force immediate redraw
+            setTimeout(() => {
+                drawText();
+            }, 100);
+            // Also redraw immediately
             drawText();
         });
         fillColorPicker.addEventListener('change', drawText);
         strokeColorPicker.addEventListener('change', drawText);
         strokeWidthSlider.addEventListener('input', drawText);
 
-        // Image upload functionality
         imageUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -711,14 +725,12 @@
             }
         });
 
-        // Clear background
         clearBgBtn.addEventListener('click', () => {
             backgroundImage = null;
             drawText();
         });
 
         function showCropModal() {
-            // Calculate display size while maintaining aspect ratio
             const maxSize = 600;
             let displayWidth, displayHeight;
             
@@ -732,11 +744,8 @@
             
             cropCanvas.width = displayWidth;
             cropCanvas.height = displayHeight;
-            
-            // Draw image on crop canvas
             cropCtx.drawImage(cropImage, 0, 0, displayWidth, displayHeight);
             
-            // Set initial crop area (square in center)
             const minDimension = Math.min(displayWidth, displayHeight);
             cropSize = minDimension * 0.6;
             cropX = (displayWidth - cropSize) / 2;
@@ -753,7 +762,6 @@
             cropOverlay.style.height = cropSize + 'px';
         }
 
-        // Crop overlay event listeners
         cropOverlay.addEventListener('mousedown', (e) => {
             if (e.target.classList.contains('crop-handle')) {
                 isResizingCrop = true;
@@ -770,10 +778,8 @@
             if (isDraggingCrop) {
                 const deltaX = e.clientX - cropStartX;
                 const deltaY = e.clientY - cropStartY;
-                
                 cropX = Math.max(0, Math.min(cropCanvas.width - cropSize, cropX + deltaX));
                 cropY = Math.max(0, Math.min(cropCanvas.height - cropSize, cropY + deltaY));
-                
                 updateCropOverlay();
                 cropStartX = e.clientX;
                 cropStartY = e.clientY;
@@ -781,12 +787,10 @@
                 const deltaX = e.clientX - cropStartX;
                 const deltaY = e.clientY - cropStartY;
                 const delta = Math.max(deltaX, deltaY);
-                
                 const newSize = Math.max(50, Math.min(
                     Math.min(cropCanvas.width - cropX, cropCanvas.height - cropY),
                     cropSize + delta
                 ));
-                
                 cropSize = newSize;
                 updateCropOverlay();
                 cropStartX = e.clientX;
@@ -800,32 +804,21 @@
             resizeHandle = null;
         });
 
-        // Crop modal buttons
         confirmCrop.addEventListener('click', () => {
-            // Calculate crop ratios
             const scaleX = cropImage.width / cropCanvas.width;
             const scaleY = cropImage.height / cropCanvas.height;
-            
-            // Create cropped image
             const croppedCanvas = document.createElement('canvas');
             croppedCanvas.width = 512;
             croppedCanvas.height = 512;
             const croppedCtx = croppedCanvas.getContext('2d');
-            
-            // Draw cropped portion
             croppedCtx.drawImage(
                 cropImage,
                 cropX * scaleX, cropY * scaleY, cropSize * scaleX, cropSize * scaleY,
                 0, 0, 512, 512
             );
-            
-            // Create background image
             backgroundImage = new Image();
-            backgroundImage.onload = () => {
-                drawText();
-            };
+            backgroundImage.onload = () => drawText();
             backgroundImage.src = croppedCanvas.toDataURL();
-            
             cropModal.style.display = 'none';
         });
 
@@ -833,22 +826,18 @@
             cropModal.style.display = 'none';
         });
 
-        // Close modal on background click
         cropModal.addEventListener('click', (e) => {
             if (e.target === cropModal) {
                 cropModal.style.display = 'none';
             }
         });
 
-        // Drag functionality
         canvas.addEventListener('mousedown', (e) => {
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
-            
-            // Check if click is near text (simple distance check)
             const distance = Math.sqrt((mouseX - textX) ** 2 + (mouseY - textY) ** 2);
-            if (distance < 50) { // 50px tolerance
+            if (distance < 50) {
                 isDragging = true;
                 dragX = mouseX - textX;
                 dragY = mouseY - textY;
@@ -860,22 +849,15 @@
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
-            
             if (isDragging) {
                 textX = mouseX - dragX;
                 textY = mouseY - dragY;
-                
-                // Keep text within canvas bounds
                 textX = Math.max(50, Math.min(canvas.width - 50, textX));
                 textY = Math.max(50, Math.min(canvas.height - 50, textY));
-                
-                // Update sliders to match drag position
                 horizontalSlider.value = Math.round((textX / canvas.width) * 100);
                 verticalSlider.value = Math.round((textY / canvas.height) * 100);
-                
                 drawText();
             } else {
-                // Change cursor when hovering over text
                 const distance = Math.sqrt((mouseX - textX) ** 2 + (mouseY - textY) ** 2);
                 canvas.style.cursor = distance < 50 ? 'grab' : 'move';
             }
@@ -891,14 +873,12 @@
             canvas.style.cursor = 'move';
         });
 
-        // Touch support for mobile
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const rect = canvas.getBoundingClientRect();
             const touch = e.touches[0];
             const mouseX = touch.clientX - rect.left;
             const mouseY = touch.clientY - rect.top;
-            
             const distance = Math.sqrt((mouseX - textX) ** 2 + (mouseY - textY) ** 2);
             if (distance < 50) {
                 isDragging = true;
@@ -914,16 +894,12 @@
                 const touch = e.touches[0];
                 const mouseX = touch.clientX - rect.left;
                 const mouseY = touch.clientY - rect.top;
-                
                 textX = mouseX - dragX;
                 textY = mouseY - dragY;
-                
                 textX = Math.max(50, Math.min(canvas.width - 50, textX));
                 textY = Math.max(50, Math.min(canvas.height - 50, textY));
-                
                 horizontalSlider.value = Math.round((textX / canvas.width) * 100);
                 verticalSlider.value = Math.round((textY / canvas.height) * 100);
-                
                 drawText();
             }
         });
@@ -933,7 +909,6 @@
             isDragging = false;
         });
 
-        // Save as PNG
         saveBtn.addEventListener('click', () => {
             const link = document.createElement('a');
             link.download = `whatsapp-sticker-${Date.now()}.png`;
@@ -941,7 +916,6 @@
             link.click();
         });
 
-        // Initial draw
         drawText();
     </script>
 </body>
